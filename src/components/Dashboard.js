@@ -22,6 +22,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import Search from './Search';
+import Company from './Company';
 
 const drawerWidth = 240;
 
@@ -169,7 +170,7 @@ function DashboardContent() {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <Search />
+                                    <Company />
                                 </Paper>
                             </Grid>
                         </Grid>
