@@ -21,8 +21,7 @@ import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
-import Search from './Search';
-import Company from './Company';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -79,6 +78,8 @@ function DashboardContent() {
         setOpen(!open);
     };
 
+    const navigate = useNavigate();
+
     return (
         <ThemeProvider theme={mdTheme}>
             <Box sx={{ display: 'flex' }}>
@@ -127,7 +128,9 @@ function DashboardContent() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        <ListItemButton>
+                        <ListItemButton onClick={() => {
+                            navigate("");
+                        }}>
                             <ListItemIcon>
                                 <SearchIcon />
                             </ListItemIcon>
@@ -145,7 +148,9 @@ function DashboardContent() {
                             </ListItemIcon>
                             <ListItemText primary="Create new account" />
                         </ListItemButton>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => {
+                            navigate("/");
+                        }}>
                             <ListItemIcon>
                                 <LogoutIcon />
                             </ListItemIcon>
@@ -170,7 +175,7 @@ function DashboardContent() {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <Company />
+                                    <Outlet />
                                 </Paper>
                             </Grid>
                         </Grid>

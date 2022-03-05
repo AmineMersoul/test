@@ -14,6 +14,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useNavigate } from 'react-router-dom';
 
 export default function Search() {
 
@@ -60,9 +61,7 @@ export default function Search() {
         return { compnany_name, account_type, user_name, email, employee_number, employee_id };
     }
 
-    const usersList = [
-        { label: 'User1', email: 'user1@gmail.com' },
-    ];
+    const navigate = useNavigate();
 
     return (
         <div>
@@ -178,7 +177,9 @@ export default function Search() {
                                 <TableCell>{row.user_name}</TableCell>
                                 <TableCell>{row.email}</TableCell>
                                 <TableCell>{row.employee_number}</TableCell>
-                                <TableCell><Button variant="text">Details</Button></TableCell>
+                                <TableCell><Button variant="text" onClick={() => {
+                                    navigate("company");
+                                }}>Details</Button></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
