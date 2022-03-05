@@ -1,8 +1,9 @@
 import React from 'react';
 import Signin from './Signin';
+import Dashboard from './Dashboard';
 
 function App() {
-  return <Signin />
+  return <Dashboard />
 }
 
 export default App;
