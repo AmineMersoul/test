@@ -21,7 +21,7 @@ import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
-
+import Search from './Search';
 
 const drawerWidth = 240;
 
@@ -169,7 +169,7 @@ function DashboardContent() {
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    {/* Todo create search component */}
+                                    <Search />
                                 </Paper>
                             </Grid>
                         </Grid>
