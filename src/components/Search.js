@@ -15,10 +15,23 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Search() {
 
-    const [company_1, setCompany1] = React.useState('');
+    const api = axios.create({
+        baseURL: `http://localhost:4000/getallcompanies`
+    });
+
+    React.useEffect(() => {
+        api.get('/').then(res => {
+            setCompaniesList(res.data);
+        });
+    }, []);
+
+    const [companies_list, setCompaniesList] = React.useState([]);
+
+    const [company_name_1, setCompany1] = React.useState('');
     const [company_name_2, setCompany2] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
     const [results, setResults] = React.useState([
@@ -56,17 +69,9 @@ export default function Search() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         navigate("company", {
-            state: {
-                company_name: data.get("company_name1"),
-                company_name_katakana: "カイシャ",
-                address: "address",
-                postal_code: "000-000",
-                phone_number: "090102030405",
-                email: data.get("company_name1") + "@gmail.com",
-                website: "www." + data.get("company_name1") + ".com",
-                date_of_establishment: "2022-01-01",
-                remark: "remark"
-            }
+            state: companies_list.filter((company) => {
+                return company.id == data.get("company_name1")
+            })[0]
         });
     };
 
@@ -85,14 +90,14 @@ export default function Search() {
                             labelId="select-company"
                             id="company_name1"
                             name="company_name1"
-                            value={company_1}
+                            value={company_name_1}
                             label="Select Company"
                             onChange={(event) => { setCompany1(event.target.value) }}
                             required
                         >
-                            <MenuItem value={"company_1"}>Company 1</MenuItem>
-                            <MenuItem value={"company_2"}>Company 2</MenuItem>
-                            <MenuItem value={"company_3"}>Company 3</MenuItem>
+                            {companies_list.map((row) => (
+                                <MenuItem key={row.id} value={row.id}>{row.company_name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <Button
@@ -121,9 +126,9 @@ export default function Search() {
                             onChange={(e) => setCompany2(e.target.value)}
                             required
                         >
-                            <MenuItem value={"company_1"}>Company 1</MenuItem>
-                            <MenuItem value={"company_2"}>Company 2</MenuItem>
-                            <MenuItem value={"company_3"}>Company 3</MenuItem>
+                            {companies_list.map((row) => (
+                                <MenuItem key={row.id} value={row.id}>{row.company_name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <Box sx={{ height: 20, }} />
