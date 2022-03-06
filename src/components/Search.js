@@ -22,22 +22,17 @@ export default function Search() {
     const [company_name_2, setCompany2] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
     const [results, setResults] = React.useState([
-        createData('Company 01', 'admin', 'User 01', 'user01@gmail.com', 24, 101),
+        {
+            compnany_name: 'Company 01',
+            account_type: 'admin',
+            user_name: 'User 01',
+            email: 'user01@gmail.com',
+            employee_number: 25,
+            employee_id: 101
+        }
     ]);
 
-    const handleChangeCompanyName1 = (event) => {
-        setCompany1(event.target.value);
-    };
-
-    const handleChangeCompanyName2 = (event) => {
-        setCompany2(event.target.value);
-    };
-
-    const handleChangeAccountType = (event) => {
-        setAccountType(event.target.value);
-    };
-
-    const handleSubmit = (event) => {
+    const handleSubmitUser = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
@@ -46,20 +41,34 @@ export default function Search() {
             user_name: data.get("user_name"),
         });
         setResults([
-            createData(
-                data.get("company_name2"),
-                data.get("account_type"),
-                data.get("user_name"),
-                data.get("user_name") + '@gmail.com',
-                24,
-                101
-            ),
+            {
+                compnany_name: data.get("company_name2"),
+                account_type: data.get("account_type"),
+                user_name: data.get("user_name"),
+                email: data.get("user_name") + '@gmail.com',
+                employee_number: 24,
+                employee_id: 101
+            },
         ]);
     };
 
-    function createData(compnany_name, account_type, user_name, email, employee_number, employee_id) {
-        return { compnany_name, account_type, user_name, email, employee_number, employee_id };
-    }
+    const handleSubmitCompany = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        navigate("company", {
+            state: {
+                company_name: data.get("company_name1"),
+                company_name_katakana: "カイシャ",
+                address: "address",
+                postal_code: "000-000",
+                phone_number: "090102030405",
+                email: data.get("company_name1") + "@gmail.com",
+                website: "www." + data.get("company_name1") + ".com",
+                date_of_establishment: "2022-01-01",
+                remark: "remark"
+            }
+        });
+    };
 
     const navigate = useNavigate();
 
@@ -68,21 +77,24 @@ export default function Search() {
             <Typography component="h2" variant="h6" color="primary" gutterBottom>
                 Search Compnay
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ minWidth: 120 }}>
-                <FormControl fullWidth>
-                    <InputLabel id="select-company">Select Company</InputLabel>
-                    <Select
-                        labelId="select-company"
-                        id="select_1"
-                        name="select_1"
-                        value={company_1}
-                        label="Select Company"
-                        onChange={handleChangeCompanyName1}
-                    >
-                        <MenuItem value={"company_1"}>Company 1</MenuItem>
-                        <MenuItem value={"company_2"}>Company 2</MenuItem>
-                        <MenuItem value={"company_3"}>Company 3</MenuItem>
-                    </Select>
+            <Box sx={{ minWidth: 120 }}>
+                <Box component="form" onSubmit={handleSubmitCompany}>
+                    <FormControl fullWidth>
+                        <InputLabel id="select-company">Select Company</InputLabel>
+                        <Select
+                            labelId="select-company"
+                            id="company_name1"
+                            name="company_name1"
+                            value={company_1}
+                            label="Select Company"
+                            onChange={(event) => { setCompany1(event.target.value) }}
+                            required
+                        >
+                            <MenuItem value={"company_1"}>Company 1</MenuItem>
+                            <MenuItem value={"company_2"}>Company 2</MenuItem>
+                            <MenuItem value={"company_3"}>Company 3</MenuItem>
+                        </Select>
+                    </FormControl>
                     <Button
                         type="submit"
                         fullWidth
@@ -91,61 +103,65 @@ export default function Search() {
                     >
                         Search
                     </Button>
-                </FormControl>
+                </Box>
                 <Box sx={{ height: 40, }} />
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
                     Search Users
                 </Typography>
                 <Box sx={{ height: 10, }} />
-                <FormControl fullWidth>
-                    <InputLabel id="select-company-2">Select Company</InputLabel>
-                    <Select
-                        labelId="select-company-2"
-                        id="company_name2"
-                        name="company_name2"
-                        value={company_name_2}
-                        label="Select Company"
-                        onChange={handleChangeCompanyName2}
+                <Box component="form" onSubmit={handleSubmitUser}>
+                    <FormControl fullWidth>
+                        <InputLabel id="select-company-2">Select Company</InputLabel>
+                        <Select
+                            labelId="select-company-2"
+                            id="company_name2"
+                            name="company_name2"
+                            value={company_name_2}
+                            label="Select Company"
+                            onChange={(e) => setCompany2(e.target.value)}
+                            required
+                        >
+                            <MenuItem value={"company_1"}>Company 1</MenuItem>
+                            <MenuItem value={"company_2"}>Company 2</MenuItem>
+                            <MenuItem value={"company_3"}>Company 3</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Box sx={{ height: 20, }} />
+                    <FormControl fullWidth>
+                        <InputLabel id="select-account-type">Account Type</InputLabel>
+                        <Select
+                            labelId="select-account-type"
+                            id="account_type"
+                            name="account_type"
+                            value={accountType}
+                            label="Account Type"
+                            onChange={(e) => { setAccountType(e.target.value) }}
+                            required
+                        >
+                            <MenuItem value={"system admin"}>System Admin</MenuItem>
+                            <MenuItem value={"admin"}>Admin</MenuItem>
+                            <MenuItem value={"user"}>User</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="user_name"
+                        label="User Name or E-Mail"
+                        type="text"
+                        id="name"
+                        autoComplete="name"
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
                     >
-                        <MenuItem value={"company_1"}>Company 1</MenuItem>
-                        <MenuItem value={"company_2"}>Company 2</MenuItem>
-                        <MenuItem value={"company_3"}>Company 3</MenuItem>
-                    </Select>
-                </FormControl>
-                <Box sx={{ height: 20, }} />
-                <FormControl fullWidth>
-                    <InputLabel id="select-account-type">Account Type</InputLabel>
-                    <Select
-                        labelId="select-account-type"
-                        id="account_type"
-                        name="account_type"
-                        value={accountType}
-                        label="Account Type"
-                        onChange={handleChangeAccountType}
-                    >
-                        <MenuItem value={"account_type_1"}>Account Type 1</MenuItem>
-                        <MenuItem value={"account_type_2"}>Account Type 2</MenuItem>
-                        <MenuItem value={"account_type_3"}>Account Type 3</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="user_name"
-                    label="User Name or E-Mail"
-                    type="text"
-                    id="name"
-                    autoComplete="name"
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                >
-                    Search
-                </Button>
+                        Search
+                    </Button>
+                </Box>
             </Box>
             <Box sx={{ height: 40, }} />
             <Typography component="h2" variant="h6" color="primary" gutterBottom>
@@ -178,7 +194,21 @@ export default function Search() {
                                 <TableCell>{row.email}</TableCell>
                                 <TableCell>{row.employee_number}</TableCell>
                                 <TableCell><Button variant="text" onClick={() => {
-                                    navigate("company");
+                                    navigate("user", {
+                                        state: {
+                                            name: row.user_name,
+                                            name_katakana: row.user_name,
+                                            employee_number: row.employee_number,
+                                            department: 'department',
+                                            email: row.email,
+                                            phone_number: '090102030405',
+                                            address: 'adresse',
+                                            postal_code: '000-000',
+                                            date_of_birth: '2000-01-01',
+                                            remark: 'remark',
+                                        }
+                                    }
+                                    );
                                 }}>Details</Button></TableCell>
                             </TableRow>
                         ))}
