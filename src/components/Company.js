@@ -6,17 +6,39 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Company() {
+
+    const location = useLocation();
+    const [company_name, setCompanyName] = React.useState(location.state.company_name);
+    const [company_name_katakana, setCompanyNameKatakana] = React.useState(location.state.company_name_katakana);
+    const [address, setAddress] = React.useState(location.state.address);
+    const [postal_code, setPostalCode] = React.useState(location.state.postal_code);
+    const [phone_number, setPhoneNumber] = React.useState(location.state.phone_number);
+    const [email, setEmail] = React.useState(location.state.email);
+    const [website, setWebsite] = React.useState(location.state.website);
+    const [date_of_establishment, setDateOfEstablishment] = React.useState(location.state.date_of_establishment);
+    const [remark, setRemark] = React.useState(location.state.remark);
+
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         // eslint-disable-next-line no-console
         console.log({
+            company_name: data.get('company_name'),
+            company_name_katakana: data.get('company_name_katakana'),
+            address: data.get('address'),
+            postal_code: data.get('postal_code'),
+            phone_number: data.get('phone_number'),
             email: data.get('email'),
-            password: data.get('password'),
+            website: data.get('website'),
+            date_of_establishment: data.get('date_of_establishment'),
+            remark: data.get('remark'),
         });
+        navigate("/dashboard");
     };
 
     const Item = styled(Paper)(({ theme }) => ({
@@ -40,6 +62,8 @@ export default function Company() {
                             name="company_name"
                             label="Company Name"
                             autoComplete="email"
+                            value={company_name}
+                            onChange={(e) => setCompanyName(e.target.value)}
                             autoFocus
                         />
                         <TextField
@@ -51,16 +75,20 @@ export default function Company() {
                             label="Company Name Katakana"
                             type="text"
                             autoComplete="company_name_katakana"
+                            value={company_name_katakana}
+                            onChange={(e) => setCompanyNameKatakana(e.target.value)}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="adress"
-                            name="adress"
-                            label="Adress"
+                            id="address"
+                            name="address"
+                            label="Address"
                             type="text"
                             autoComplete="complete"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -71,6 +99,8 @@ export default function Company() {
                             label="Postal Code"
                             type="text"
                             autoComplete="complete"
+                            value={postal_code}
+                            onChange={(e) => setPostalCode(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -81,6 +111,8 @@ export default function Company() {
                             label="Phone Number"
                             type="text"
                             autoComplete="complete"
+                            value={phone_number}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -91,6 +123,8 @@ export default function Company() {
                             label="E-Mail Adresse"
                             type="text"
                             autoComplete="complete"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -101,6 +135,8 @@ export default function Company() {
                             label="Website"
                             type="text"
                             autoComplete="complete"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -111,6 +147,8 @@ export default function Company() {
                             label="Date of Establishment"
                             type="text"
                             autoComplete="complete"
+                            value={date_of_establishment}
+                            onChange={(e) => setDateOfEstablishment(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -121,6 +159,8 @@ export default function Company() {
                             label="Remark"
                             type="text"
                             autoComplete="complete"
+                            value={remark}
+                            onChange={(e) => setRemark(e.target.value)}
                         />
                         <Button
                             type="submit"
