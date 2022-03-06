@@ -60,12 +60,12 @@ app.post('/updatecompany', jsonParser, (req, res) => {
         company.date_of_establishment,
         company.remark,
         company.profile_image
-    ], (err, res) => {
+    ], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
-            console.log(res.command + ' rows : ' + res.rowCount);
-            res.json({ message: "company updated" })
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: "company updated" });
         }
     });
 
