@@ -5,6 +5,7 @@ import Search from './Search';
 import Company from './Company';
 import { Routes, Route, Link } from 'react-router-dom';
 import User from './User';
+import Account from './Account';
 
 function App() {
   return <div className="App">
@@ -14,6 +15,7 @@ function App() {
         <Route path='' element={<Search />} />
         <Route path='company' element={<Company />} />
         <Route path='user' element={<User />} />
+        <Route path='account' element={<Account />} />
       </Route>
     </Routes>
   </div>

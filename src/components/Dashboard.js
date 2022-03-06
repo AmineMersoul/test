@@ -136,13 +136,29 @@ function DashboardContent() {
                             </ListItemIcon>
                             <ListItemText primary="Search" />
                         </ListItemButton>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => {
+                            navigate("company", {
+                                state: {
+                                    company_name: '',
+                                    company_name_katakana: '',
+                                    address: '',
+                                    postal_code: '',
+                                    phone_number: '',
+                                    email: '',
+                                    website: '',
+                                    date_of_establishment: '',
+                                    remark: ''
+                                }
+                            });
+                        }}>
                             <ListItemIcon>
                                 <AddBusinessIcon />
                             </ListItemIcon>
                             <ListItemText primary="Register company" />
                         </ListItemButton>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => {
+                            navigate("account");
+                        }}>
                             <ListItemIcon>
                                 <AddReactionIcon />
                             </ListItemIcon>
