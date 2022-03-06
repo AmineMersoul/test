@@ -147,7 +147,8 @@ function DashboardContent() {
                                     email: '',
                                     website: '',
                                     date_of_establishment: new Date(),
-                                    remark: ''
+                                    remark: '',
+                                    method: 'add'
                                 }
                             });
                         }}>

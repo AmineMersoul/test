@@ -12,7 +12,7 @@ import axios from 'axios';
 export default function Company() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000/updatecompany`
+        baseURL: `http://localhost:4000/`
     });
 
     const location = useLocation();
@@ -43,22 +43,42 @@ export default function Company() {
             date_of_establishment: data.get('date_of_establishment'),
             remark: data.get('remark'),
         });
-        api.post('/', {
-            id: location.state.id,
-            company_name: data.get('company_name'),
-            company_name_katakana: data.get('company_name_katakana'),
-            address: data.get('address'),
-            postal_code: data.get('postal_code'),
-            phone_number: data.get('phone_number'),
-            email: data.get('email'),
-            website: data.get('website'),
-            date_of_establishment: data.get('date_of_establishment'),
-            remark: data.get('remark'),
-            profile_image: 'https://i.pravatar.cc/300'
-        }).then((res) => {
-            console.log(res);
-            navigate("/dashboard");
-        });
+
+        if (location.state.method == 'add') {
+            api.post('/addcompany', {
+                id: location.state.id,
+                company_name: data.get('company_name'),
+                company_name_katakana: data.get('company_name_katakana'),
+                address: data.get('address'),
+                postal_code: data.get('postal_code'),
+                phone_number: data.get('phone_number'),
+                email: data.get('email'),
+                website: data.get('website'),
+                date_of_establishment: data.get('date_of_establishment'),
+                remark: data.get('remark'),
+                profile_image: 'https://i.pravatar.cc/300'
+            }).then((res) => {
+                console.log(res);
+                navigate("/dashboard");
+            });
+        } else {
+            api.post('/updatecompany', {
+                id: location.state.id,
+                company_name: data.get('company_name'),
+                company_name_katakana: data.get('company_name_katakana'),
+                address: data.get('address'),
+                postal_code: data.get('postal_code'),
+                phone_number: data.get('phone_number'),
+                email: data.get('email'),
+                website: data.get('website'),
+                date_of_establishment: data.get('date_of_establishment'),
+                remark: data.get('remark'),
+                profile_image: 'https://i.pravatar.cc/300'
+            }).then((res) => {
+                console.log(res);
+                navigate("/dashboard");
+            });
+        }
     };
 
     const Item = styled(Paper)(({ theme }) => ({

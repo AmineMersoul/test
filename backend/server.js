@@ -32,6 +32,39 @@ app.get('/getallcompanies', (req, res) => {
     }
 });
 
+// add company
+app.post('/addcompany', jsonParser, (req, res) => {
+
+    const company = req.body;
+    let errors = [];
+
+    pool.query(`INSERT INTO company(company_name, company_name_katakana, address, postal_code, phone_number, email, website, date_of_establishment, remark, profile_image)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [
+        company.company_name,
+        company.company_name_katakana,
+        company.address,
+        company.postal_code,
+        company.phone_number,
+        company.email,
+        company.website,
+        company.date_of_establishment,
+        company.remark,
+        company.profile_image
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: "company updated" });
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+})
+
+// update company
 app.post('/updatecompany', jsonParser, (req, res) => {
 
     const company = req.body;
