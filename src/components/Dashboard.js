@@ -146,7 +146,7 @@ function DashboardContent() {
                                     phone_number: '',
                                     email: '',
                                     website: '',
-                                    date_of_establishment: '',
+                                    date_of_establishment: new Date(),
                                     remark: ''
                                 }
                             });
@@ -170,7 +170,7 @@ function DashboardContent() {
                             <ListItemIcon>
                                 <LogoutIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Log in" />
+                            <ListItemText primary="Log out" />
                         </ListItemButton>
                     </List>
                 </Drawer>
