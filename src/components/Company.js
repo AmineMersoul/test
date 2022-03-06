@@ -7,8 +7,13 @@ import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Company() {
+
+    const api = axios.create({
+        baseURL: `http://localhost:4000/updatecompany`
+    });
 
     const location = useLocation();
     const [company_name, setCompanyName] = React.useState(location.state.company_name);
@@ -38,7 +43,22 @@ export default function Company() {
             date_of_establishment: data.get('date_of_establishment'),
             remark: data.get('remark'),
         });
-        navigate("/dashboard");
+        api.post('/', {
+            id: location.state.id,
+            company_name: data.get('company_name'),
+            company_name_katakana: data.get('company_name_katakana'),
+            address: data.get('address'),
+            postal_code: data.get('postal_code'),
+            phone_number: data.get('phone_number'),
+            email: data.get('email'),
+            website: data.get('website'),
+            date_of_establishment: data.get('date_of_establishment'),
+            remark: data.get('remark'),
+            profile_image: 'https://i.pravatar.cc/300'
+        }).then((res) => {
+            console.log(res);
+            navigate("/dashboard");
+        });
     };
 
     const Item = styled(Paper)(({ theme }) => ({
@@ -147,7 +167,7 @@ export default function Company() {
                             label="Date of Establishment"
                             type="text"
                             autoComplete="complete"
-                            value={date_of_establishment}
+                            value={new Date(date_of_establishment).toLocaleDateString("en-US")}
                             onChange={(e) => setDateOfEstablishment(e.target.value)}
                         />
                         <TextField
