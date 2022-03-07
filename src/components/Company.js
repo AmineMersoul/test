@@ -62,7 +62,7 @@ export default function Company() {
                 profile_image: 'https://i.pravatar.cc/300'
             }).then((res) => {
                 console.log(res);
-                navigate("/dashboard");
+                navigate("/");
             }).catch((err) => {
                 console.log(err.response);
             });
@@ -81,7 +81,7 @@ export default function Company() {
                 profile_image: 'https://i.pravatar.cc/300'
             }).then((res) => {
                 console.log(res);
-                navigate("/dashboard");
+                navigate("/");
             }).catch((err) => {
                 console.log(err.response);
             });
