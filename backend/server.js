@@ -105,7 +105,7 @@ app.post('/updatecompany', jsonParser, (req, res) => {
     if (errors.length > 0) {
         res.json({ errors });
     }
-})
+});
 
 // get all accounts
 app.get('/getallaccounts', (req, res) => {
@@ -155,6 +155,54 @@ app.post('/searchaccount', jsonParser, (req, res) => {
         res.json({ errors });
     }
 });
+
+
+// update user
+app.post('/updateuser', jsonParser, (req, res) => {
+
+    const user = req.body;
+    let errors = [];
+
+    console.log('user', user);
+
+    pool.query(`UPDATE account
+    SET name = $2,
+    name_katakana = $3,
+    employee_number = $4,
+    department = $5,
+    email = $6,
+    phone_number = $7,
+    address = $8,
+    postal_code = $9,
+    date_of_birth = $10,
+    remark = $11,
+    profile_image = $12
+    WHERE id = $1`, [
+        user.id,
+        user.name,
+        user.name_katakana,
+        user.employee_number,
+        user.department,
+        user.email,
+        user.phone_number,
+        user.address,
+        user.postal_code,
+        user.date_of_birth,
+        user.remark,
+        user.profile_image
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: "user updated" });
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

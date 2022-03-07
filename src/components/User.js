@@ -7,8 +7,13 @@ import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function User() {
+
+    const api = axios.create({
+        baseURL: `http://localhost:4000/`
+    });
 
     const location = useLocation();
     const [name, setName] = React.useState(location.state.name);
@@ -40,7 +45,23 @@ export default function User() {
             date_of_birth: data.get('date_of_birth'),
             remark: data.get('remark'),
         });
-        navigate("/dashboard");
+        api.post('/updateuser', {
+            id: location.state.id,
+            name: data.get('name'),
+            name_katakana: data.get('name_katakana'),
+            employee_number: data.get('employee_number'),
+            department: data.get('department'),
+            email: data.get('email'),
+            phone_number: data.get('phone_number'),
+            address: data.get('address'),
+            postal_code: data.get('postal_code'),
+            date_of_birth: data.get('date_of_birth'),
+            remark: data.get('remark'),
+            profile_image: 'https://i.pravatar.cc/300'
+        }).then((res) => {
+            console.log(res);
+            navigate("/dashboard");
+        });
     };
 
     const Item = styled(Paper)(({ theme }) => ({
@@ -158,10 +179,10 @@ export default function User() {
                             fullWidth
                             id="date_of_birth"
                             name="date_of_birth"
-                            label="Date of Establishment"
+                            label="Date of Birth"
                             type="text"
                             autoComplete="date_of_birth"
-                            value={date_of_birth}
+                            value={new Date(date_of_birth).toLocaleDateString("en-US")}
                             onChange={(e) => setDateOfBirth(e.target.value)}
                         />
                         <TextField
