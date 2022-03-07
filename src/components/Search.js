@@ -27,6 +27,9 @@ export default function Search() {
         api.get('/getallcompanies').then(res => {
             setCompaniesList(res.data);
         });
+        api.get('/getallaccounts').then(res => {
+            setResults(res.data);
+        });
     }, []);
 
     const [companies_list, setCompaniesList] = React.useState([]);
