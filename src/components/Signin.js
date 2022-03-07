@@ -8,10 +8,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
 export default function Signin() {
+
+    const api = axios.create({
+        baseURL: `http://localhost:4000`
+    });
+
+    const navigate = useNavigate();
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -19,6 +28,16 @@ export default function Signin() {
         console.log({
             email: data.get('email'),
             password: data.get('password'),
+        });
+        api.post('/login', {
+            email: data.get('email'),
+            password: data.get('password')
+        }).then((res) => {
+            console.log(res.data);
+            localStorage.setItem('token', res.data.token);
+            navigate("/");
+        }).catch((err) => {
+            console.log(err.response);
         });
     };
 

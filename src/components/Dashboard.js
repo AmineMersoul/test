@@ -166,7 +166,8 @@ function DashboardContent() {
                             <ListItemText primary="Create new account" />
                         </ListItemButton>
                         <ListItemButton onClick={() => {
-                            navigate("/");
+                            localStorage.removeItem('token');
+                            navigate("/login");
                         }}>
                             <ListItemIcon>
                                 <LogoutIcon />

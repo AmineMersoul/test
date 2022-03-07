@@ -57,7 +57,7 @@ VALUES ('user_01',
         '000-0000',
         '2022-01-01',
         'remark',
-        'password',
+        '$2b$10$F7WCXNI9Ik5YSfj13pMEYOSr8BS2ZCcK1ZnyMgvGORCxBb88pKRNu',
         'https://i.pravatar.cc/300',
         'system admin');
 

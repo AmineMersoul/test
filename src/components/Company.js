@@ -12,7 +12,10 @@ import axios from 'axios';
 export default function Company() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000/`
+        baseURL: `http://localhost:4000`,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
 
     const location = useLocation();
@@ -60,6 +63,8 @@ export default function Company() {
             }).then((res) => {
                 console.log(res);
                 navigate("/dashboard");
+            }).catch((err) => {
+                console.log(err.response);
             });
         } else {
             api.post('/updatecompany', {
@@ -77,6 +82,8 @@ export default function Company() {
             }).then((res) => {
                 console.log(res);
                 navigate("/dashboard");
+            }).catch((err) => {
+                console.log(err.response);
             });
         }
     };

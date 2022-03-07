@@ -19,15 +19,22 @@ import axios from 'axios';
 export default function Account() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000`
+        baseURL: `http://localhost:4000`,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
 
     React.useEffect(() => {
         api.get('/getallaccounts').then(res => {
             setHistory(res.data);
+        }).catch((err) => {
+            console.log(err.response);
         });
         api.get('/getallcompanies').then(res => {
             setCompaniesList(res.data);
+        }).catch((err) => {
+            console.log(err.response);
         });
     }, []);
 
@@ -53,6 +60,8 @@ export default function Account() {
                     id: 101
                 },
             ]);
+        }).catch((err) => {
+            console.log(err.response);
         });
     }
 

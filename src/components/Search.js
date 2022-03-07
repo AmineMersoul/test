@@ -20,15 +20,22 @@ import axios from 'axios';
 export default function Search() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000`
+        baseURL: `http://localhost:4000`,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
 
     React.useEffect(() => {
         api.get('/getallcompanies').then(res => {
             setCompaniesList(res.data);
+        }).catch((err) => {
+            console.log(err.response);
         });
         api.get('/getallaccounts').then(res => {
             setResults(res.data);
+        }).catch((err) => {
+            console.log(err.response);
         });
     }, []);
 
@@ -43,7 +50,9 @@ export default function Search() {
         api.post('/searchaccount', { company_name: company_name, type: type, query: query }).then((res) => {
             console.log(res);
             setResults(res.data);
-        });
+        }).catch((err) => {
+            console.log(err.response);
+        });;
     }
 
     const handleSubmitUser = (event) => {
