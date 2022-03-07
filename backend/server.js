@@ -55,14 +55,14 @@ app.post('/addcompany', jsonParser, (req, res) => {
             console.log(err.stack);
         } else {
             console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
-            res.json({ message: "company updated" });
+            res.json({ message: "company created" });
         }
     });
 
     if (errors.length > 0) {
         res.json({ errors });
     }
-})
+});
 
 // update company
 app.post('/updatecompany', jsonParser, (req, res) => {
@@ -125,6 +125,31 @@ app.get('/getallaccounts', (req, res) => {
         res.json({ errors });
     }
 });
+
+// add account
+app.post('/addaccount', jsonParser, (req, res) => {
+
+    const account = req.body;
+    let errors = [];
+
+    pool.query(`INSERT into account(company_name, email, type)
+    VALUES ($1, $2, $3)`, [
+        account.company_name,
+        account.email,
+        account.type
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: "account created" });
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+})
 
 // search account
 app.post('/searchaccount', jsonParser, (req, res) => {

@@ -14,44 +14,62 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Account() {
 
+    const api = axios.create({
+        baseURL: `http://localhost:4000`
+    });
+
+    React.useEffect(() => {
+        api.get('/getallaccounts').then(res => {
+            setHistory(res.data);
+        });
+        api.get('/getallcompanies').then(res => {
+            setCompaniesList(res.data);
+        });
+    }, []);
+
+    const [companies_list, setCompaniesList] = React.useState([]);
     const [company_name, setCompanyName] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
-    const [history, setHistory] = React.useState([
-        {
-            compnany_name: 'Company 01',
-            account_type: 'admin',
-            user_name: 'User 01',
-            email: 'user01@gmail.com',
-            employee_number: 25,
-            employee_id: 101
-        }
-    ]);
+    const [history, setHistory] = React.useState([]);
+
+    function CreateUser(company_name, email, type) {
+        api.post('/addaccount', {
+            company_name: company_name,
+            email: email,
+            type: type
+        }).then((res) => {
+            console.log(res);
+            setHistory([
+                ...history,
+                {
+                    company_name: company_name,
+                    type: type,
+                    name: '',
+                    email: email,
+                    id: 101
+                },
+            ]);
+        });
+    }
 
     const handleSubmitCompany = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
-            company_name: data.get("company_name"),
-            account_type: data.get("account_type"),
+            company_name: companies_list.filter((company) => {
+                return company.id == data.get("company_name")
+            })[0].company_name,
+            type: data.get("account_type"),
             email: data.get("email"),
         });
-        setHistory([
-            ...history,
-            {
-                compnany_name: data.get("company_name"),
-                account_type: data.get("account_type"),
-                user_name: data.get("email"),
-                email: data.get("email"),
-                employee_id: 101
-            },
-        ]);
+        CreateUser(companies_list.filter((company) => {
+            return company.id == data.get("company_name")
+        })[0].company_name, data.get("email"), data.get("account_type"));
     };
-
-    const navigate = useNavigate();
 
     return (
         <div>
@@ -89,9 +107,9 @@ export default function Account() {
                             onChange={(e) => setCompanyName(e.target.value)}
                             required
                         >
-                            <MenuItem value={"company_1"}>Company 1</MenuItem>
-                            <MenuItem value={"company_2"}>Company 2</MenuItem>
-                            <MenuItem value={"company_3"}>Company 3</MenuItem>
+                            {companies_list.map((row) => (
+                                <MenuItem key={row.id} value={row.id}>{row.company_name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <TextField
@@ -133,14 +151,14 @@ export default function Account() {
                     <TableBody>
                         {history.map((row) => (
                             <TableRow
-                                key={row.employee_id}
+                                key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row.compnany_name}
+                                    {row.company_name}
                                 </TableCell>
-                                <TableCell>{row.account_type}</TableCell>
-                                <TableCell>{row.user_name}</TableCell>
+                                <TableCell>{row.type}</TableCell>
+                                <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.email}</TableCell>
                                 <TableCell><Button variant="text">Requesting</Button></TableCell>
                             </TableRow>
