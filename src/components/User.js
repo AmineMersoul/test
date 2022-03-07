@@ -12,7 +12,10 @@ import axios from 'axios';
 export default function User() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000/`
+        baseURL: `http://localhost:4000/`,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
     });
 
     const location = useLocation();
@@ -60,7 +63,9 @@ export default function User() {
             profile_image: 'https://i.pravatar.cc/300'
         }).then((res) => {
             console.log(res);
-            navigate("/dashboard");
+            navigate("/");
+        }).catch((err) => {
+            console.log(err.response);
         });
     };
 
