@@ -36,7 +36,7 @@ app.get('/getallcompanies', verifyToken, (req, res) => {
 });
 
 // add company
-app.post('/addcompany', (req, res) => {
+app.post('/addcompany', verifyToken, (req, res) => {
 
     const company = req.body;
     let errors = [];
@@ -68,7 +68,7 @@ app.post('/addcompany', (req, res) => {
 });
 
 // update company
-app.post('/updatecompany', (req, res) => {
+app.post('/updatecompany', verifyToken, (req, res) => {
 
     const company = req.body;
     let errors = [];
@@ -111,7 +111,7 @@ app.post('/updatecompany', (req, res) => {
 });
 
 // get all accounts
-app.get('/getallaccounts', (req, res) => {
+app.get('/getallaccounts', verifyToken, (req, res) => {
 
     let errors = [];
 
@@ -130,7 +130,7 @@ app.get('/getallaccounts', (req, res) => {
 });
 
 // add account
-app.post('/addaccount', (req, res) => {
+app.post('/addaccount', verifyToken, (req, res) => {
 
     const account = req.body;
     let errors = [];
@@ -155,7 +155,7 @@ app.post('/addaccount', (req, res) => {
 })
 
 // search account
-app.post('/searchaccount', (req, res) => {
+app.post('/searchaccount', verifyToken, (req, res) => {
     const search = req.body;
     let errors = [];
 
@@ -186,7 +186,7 @@ app.post('/searchaccount', (req, res) => {
 
 
 // update user
-app.post('/updateuser', (req, res) => {
+app.post('/updateuser', verifyToken, (req, res) => {
 
     const user = req.body;
     let errors = [];
