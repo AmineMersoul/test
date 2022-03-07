@@ -126,6 +126,36 @@ app.get('/getallaccounts', (req, res) => {
     }
 });
 
+// search account
+app.post('/searchaccount', jsonParser, (req, res) => {
+    const search = req.body;
+    let errors = [];
+
+    console.log('search', search);
+
+    pool.query(`SELECT *
+    from account
+    WHERE company_name = $1
+    AND type = $2
+    AND (name LIKE $3
+    OR email LIKE $3)`, [
+        search.company_name,
+        search.type,
+        '%' + search.query + '%'
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            res.json(queryRes.rows);
+            console.log(queryRes.rows);
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 });

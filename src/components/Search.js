@@ -20,11 +20,11 @@ import axios from 'axios';
 export default function Search() {
 
     const api = axios.create({
-        baseURL: `http://localhost:4000/getallcompanies`
+        baseURL: `http://localhost:4000`
     });
 
     React.useEffect(() => {
-        api.get('/').then(res => {
+        api.get('/getallcompanies').then(res => {
             setCompaniesList(res.data);
         });
     }, []);
@@ -34,35 +34,28 @@ export default function Search() {
     const [company_name_1, setCompany1] = React.useState('');
     const [company_name_2, setCompany2] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
-    const [results, setResults] = React.useState([
-        {
-            compnany_name: 'Company 01',
-            account_type: 'admin',
-            user_name: 'User 01',
-            email: 'user01@gmail.com',
-            employee_number: 25,
-            employee_id: 101
-        }
-    ]);
+    const [results, setResults] = React.useState([]);
+
+    function SearchUser(company_name, type, query) {
+        api.post('/searchaccount', { company_name: company_name, type: type, query: query }).then((res) => {
+            console.log(res);
+            setResults(res.data);
+        });
+    }
 
     const handleSubmitUser = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         console.log({
             company_name2: data.get("company_name2"),
-            account_type: data.get("account_type"),
-            user_name: data.get("user_name"),
+            type: data.get("account_type"),
+            name: data.get("user_name"),
         });
-        setResults([
-            {
-                compnany_name: data.get("company_name2"),
-                account_type: data.get("account_type"),
-                user_name: data.get("user_name"),
-                email: data.get("user_name") + '@gmail.com',
-                employee_number: 24,
-                employee_id: 101
-            },
-        ]);
+        SearchUser(companies_list.filter((company) => {
+            return company.id == data.get("company_name2")
+        })[0].company_name,
+            data.get("account_type"),
+            data.get("user_name"));
     };
 
     const handleSubmitCompany = (event) => {
@@ -188,32 +181,18 @@ export default function Search() {
                     <TableBody>
                         {results.map((row) => (
                             <TableRow
-                                key={row.employee_id}
+                                key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row.compnany_name}
+                                    {row.company_name}
                                 </TableCell>
-                                <TableCell>{row.account_type}</TableCell>
-                                <TableCell>{row.user_name}</TableCell>
+                                <TableCell>{row.type}</TableCell>
+                                <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.email}</TableCell>
                                 <TableCell>{row.employee_number}</TableCell>
                                 <TableCell><Button variant="text" onClick={() => {
-                                    navigate("user", {
-                                        state: {
-                                            name: row.user_name,
-                                            name_katakana: row.user_name,
-                                            employee_number: row.employee_number,
-                                            department: 'department',
-                                            email: row.email,
-                                            phone_number: '090102030405',
-                                            address: 'adresse',
-                                            postal_code: '000-000',
-                                            date_of_birth: '2000-01-01',
-                                            remark: 'remark',
-                                        }
-                                    }
-                                    );
+                                    navigate("user", { state: row });
                                 }}>Details</Button></TableCell>
                             </TableRow>
                         ))}
