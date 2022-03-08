@@ -1,11 +1,16 @@
 const express = require("express");
-var bodyParser = require('body-parser')
-const app = express();
+const bodyParser = require('body-parser')
 const { pool } = require("./dbConfig");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
 
+const app = express();
 const PORT = process.env.PORT || 4000;
+
+// Public Folders
+app.use('/images', express.static(__dirname + '/images'));
 
 // User body Parser
 app.use(bodyParser.json());
@@ -13,8 +18,75 @@ app.use(bodyParser.json());
 app.all('/*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "*");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
+
+// Set storage Engine
+const storage = multer.diskStorage({
+    destination: './images/',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// Init Upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 },
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb);
+    },
+}).single('profileImage');
+
+
+// check file type
+function checkFileType(file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Image Only!');
+    }
+}
+
+// Upload Images
+app.post('/uploadcompanyimage', verifyToken, async (req, res) => {
+    upload(req, res, (err) => {
+        console.log('body', req.body);
+        if (err) {
+            res.status(403).send(err);
+        } else {
+            if (req.file == undefined) {
+                res.status(403).send('No File Selected!');
+            } else {
+                pool.query(`UPDATE company
+                    SET profile_image = $2
+                    WHERE id = $1`, [
+                    req.body.id,
+                    `http://localhost:4000/images/${req.file.filename}`
+                ], (err, queryRes) => {
+                    if (err) {
+                        console.log(err.stack);
+                        throw error;
+                    } else {
+                        console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+                        res.json({
+                            message: 'File Uploaded!',
+                            file: `http://localhost:4000/images/${req.file.filename}`,
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
 
 // get all companies
 app.get('/getallcompanies', verifyToken, (req, res) => {

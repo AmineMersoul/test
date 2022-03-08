@@ -19,6 +19,7 @@ export default function Company() {
     });
 
     const location = useLocation();
+    const company_id = location.state.id;
     const [company_name, setCompanyName] = React.useState(location.state.company_name);
     const [company_name_katakana, setCompanyNameKatakana] = React.useState(location.state.company_name_katakana);
     const [address, setAddress] = React.useState(location.state.address);
@@ -28,6 +29,7 @@ export default function Company() {
     const [website, setWebsite] = React.useState(location.state.website);
     const [date_of_establishment, setDateOfEstablishment] = React.useState(location.state.date_of_establishment);
     const [remark, setRemark] = React.useState(location.state.remark);
+    const [profileImage, setProfileImage] = React.useState(location.state.profile_image);
 
     const navigate = useNavigate();
 
@@ -95,6 +97,22 @@ export default function Company() {
         textAlign: 'center',
         color: theme.palette.text.secondary,
     }));
+
+    function uploadImage(file) {
+        let data = new FormData();
+        data.append('profileImage', file, file.name);
+        data.append('id', company_id);
+        api.post('/uploadcompanyimage', data, {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        }).then((res) => {
+            console.log(res.data.file);
+            setProfileImage(res.data.file);
+        }).catch((err) => {
+            console.log(err.response);
+        });
+    }
 
     return (
         <div>
@@ -222,13 +240,20 @@ export default function Company() {
                 <Grid item xs={4}>
                     <Avatar
                         alt="Remy Sharp"
-                        src="https://i.pravatar.cc/300"
+                        src={profileImage}
                         sx={{ mx: "auto", width: 200, height: 200 }}
                     />
-                    <Button variant="text">Image</Button>
+                    <Button variant="text" component="label">Image
+                        <input type="file"
+                            hidden accept=".gif,.jpg,.jpeg,.png"
+                            onChange={(e) => {
+                                console.log(e.target.files[0]);
+                                uploadImage(e.target.files[0]);
+                            }}
+                        />
+                    </Button>
                 </Grid>
             </Grid>
-
         </div>
     )
 }
