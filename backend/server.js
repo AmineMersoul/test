@@ -55,7 +55,7 @@ function checkFileType(file, cb) {
     }
 }
 
-// Upload Images
+// Upload company Image
 app.post('/uploadcompanyimage', verifyToken, async (req, res) => {
     upload(req, res, (err) => {
         console.log('body', req.body);
@@ -66,6 +66,38 @@ app.post('/uploadcompanyimage', verifyToken, async (req, res) => {
                 res.status(403).send('No File Selected!');
             } else {
                 pool.query(`UPDATE company
+                    SET profile_image = $2
+                    WHERE id = $1`, [
+                    req.body.id,
+                    `http://localhost:4000/images/${req.file.filename}`
+                ], (err, queryRes) => {
+                    if (err) {
+                        console.log(err.stack);
+                        throw error;
+                    } else {
+                        console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+                        res.json({
+                            message: 'File Uploaded!',
+                            file: `http://localhost:4000/images/${req.file.filename}`,
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
+// Upload account Image
+app.post('/uploadaccountimage', verifyToken, async (req, res) => {
+    upload(req, res, (err) => {
+        console.log('body', req.body);
+        if (err) {
+            res.status(403).send(err);
+        } else {
+            if (req.file == undefined) {
+                res.status(403).send('No File Selected!');
+            } else {
+                pool.query(`UPDATE account
                     SET profile_image = $2
                     WHERE id = $1`, [
                     req.body.id,
