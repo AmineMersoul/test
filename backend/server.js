@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
+const randomstring = require("randomstring");
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -55,6 +57,118 @@ function checkFileType(file, cb) {
     }
 }
 
+// Mail Sender
+function sendMail(to, subject, text, html) {
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: 'mojapan711@gmail.com',
+            pass: ''
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    const mailOption = {
+        from: '"React App" <mojapan711@gmail.com>',
+        to: to,
+        subject: subject,
+        text: text,
+        html: html
+    };
+
+    console.log(`to : ${to}`);
+    console.log(`subject : ${subject}`);
+    console.log(`text : ${text}`);
+    console.log(`html : ${html}`);
+
+    transporter.sendMail(mailOption, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log("Message sent: %s", info.messageId);
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        console.log('Email Sent!');
+    });
+}
+
+// activate account
+app.post('/activateaccount', (req, res) => {
+
+    const user = req.body;
+    let errors = [];
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(user.password, salt);
+
+    pool.query(`UPDATE account
+    SET active = 1,
+    activation = '',
+    name = $2,
+    name_katakana = $3,
+    employee_number = $4,
+    department = $5,
+    email = $6,
+    phone_number = $7,
+    address = $8,
+    postal_code = $9,
+    date_of_birth = $10,
+    remark = $11,
+    password = $12
+    WHERE id = $1`, [
+        user.id,
+        user.name,
+        user.name_katakana,
+        user.employee_number,
+        user.department,
+        user.email,
+        user.phone_number,
+        user.address,
+        user.postal_code,
+        user.date_of_birth,
+        user.remark,
+        hashedPassword
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: 'Your Account Has Been Activated' });
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
+
+// get unactive account
+app.post('/getunactiveaccount', (req, res) => {
+
+    const account = req.body;
+    let errors = [];
+
+    pool.query(`SELECT * from account WHERE email = $1 AND activation = $2`, [account.email, account.activation], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            if (queryRes.rowCount > 0) {
+                res.json(queryRes.rows[0]);
+                console.log(queryRes.rowCount);
+            } else {
+                res.status(403).send('account not found email or activation key is wrong!');
+            }
+        }
+    });
+
+    if (errors.length > 0) {
+        res.status(403).json({ errors });
+    }
+});
+
 // Upload company Image
 app.post('/uploadcompanyimage', verifyToken, async (req, res) => {
     upload(req, res, (err) => {
@@ -88,7 +202,7 @@ app.post('/uploadcompanyimage', verifyToken, async (req, res) => {
 });
 
 // Upload account Image
-app.post('/uploadaccountimage', verifyToken, async (req, res) => {
+app.post('/uploadaccountimage', async (req, res) => {
     upload(req, res, (err) => {
         console.log('body', req.body);
         if (err) {
@@ -239,16 +353,21 @@ app.post('/addaccount', verifyToken, (req, res) => {
     const account = req.body;
     let errors = [];
 
-    pool.query(`INSERT into account(company_name, email, type)
-    VALUES ($1, $2, $3)`, [
+    const activation = randomstring.generate();
+
+    pool.query(`INSERT into account(company_name, email, type, activation, active)
+    VALUES ($1, $2, $3, $4, $5)`, [
         account.company_name,
         account.email,
-        account.type
+        account.type,
+        activation,
+        0
     ], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
             console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            sendMail(account.email, 'Activation Code!', `Welcome to My App, Click on the link to activate your account http://localhost:3000/activate?activation=${activation}&email=${account.email}`, `<h1>My App</h1><p>Welcome to my app, Click on the link to activate your account <a href="http://localhost:3000/activate?activation=${activation}&email=${account.email}">Activate Account</a></p>`);
             res.json({ message: "account created" });
         }
     });

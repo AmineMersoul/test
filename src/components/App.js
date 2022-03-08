@@ -6,6 +6,7 @@ import Company from './Company';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import User from './User';
 import Account from './Account';
+import Activate from './Activate';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
   return <div className="App">
     <Routes>
       <Route path='/login' element={<Signin />} />
+      <Route path='/activate' element={<Activate />} />
       <Route element={<ProtectedRoute />}>
         <Route path='' element={<Dashboard />}>
           <Route path='' element={<Search />} />

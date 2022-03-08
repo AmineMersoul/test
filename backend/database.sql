@@ -39,13 +39,14 @@ CREATE TABLE account(id SERIAL PRIMARY KEY,
                                                                                                                                               date_of_birth DATE, remark VARCHAR(255),
                                                                                                                                                                          password TEXT, profile_image VARCHAR(255),
                                                                                                                                                                                                       type VARCHAR(255),
-                                                                                                                                                                                                           UNIQUE(email),
-                                                                                                                                                                                                           CONSTRAINT check_type CHECK (type IN ('system admin',
-                                                                                                                                                                                                                                                 'admin',
-                                                                                                                                                                                                                                                 'user')));
+                                                                                                                                                                                                           activation VARCHAR(255),
+                                                                                                                                                                                                                      active INT, UNIQUE(email),
+                                                                                                                                                                                                                                  CONSTRAINT check_type CHECK (type IN ('system admin',
+                                                                                                                                                                                                                                                                        'admin',
+                                                                                                                                                                                                                                                                        'user')));
 
 
-INSERT into account(name, name_katakana, company_name, employee_number, department, email, phone_number, address, postal_code, date_of_birth, remark, password, profile_image, type)
+INSERT into account(name, name_katakana, company_name, employee_number, department, email, phone_number, address, postal_code, date_of_birth, remark, password, profile_image, type, activation, active)
 VALUES ('user_01',
         'user_01',
         'company_101',
@@ -59,7 +60,9 @@ VALUES ('user_01',
         'remark',
         '$2b$10$F7WCXNI9Ik5YSfj13pMEYOSr8BS2ZCcK1ZnyMgvGORCxBb88pKRNu',
         'https://i.pravatar.cc/300',
-        'system admin');
+        'system admin',
+        '',
+        1);
 
 
 SELECT *
