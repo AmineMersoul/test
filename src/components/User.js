@@ -61,8 +61,7 @@ export default function User() {
             address: data.get('address'),
             postal_code: data.get('postal_code'),
             date_of_birth: data.get('date_of_birth'),
-            remark: data.get('remark'),
-            profile_image: 'https://i.pravatar.cc/300'
+            remark: data.get('remark')
         }).then((res) => {
             console.log(res);
             navigate("/");

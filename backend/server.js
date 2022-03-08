@@ -259,8 +259,8 @@ app.post('/addcompany', verifyToken, (req, res) => {
     const company = req.body;
     let errors = [];
 
-    pool.query(`INSERT INTO company(company_name, company_name_katakana, address, postal_code, phone_number, email, website, date_of_establishment, remark, profile_image)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [
+    pool.query(`INSERT INTO company(company_name, company_name_katakana, address, postal_code, phone_number, email, website, date_of_establishment, remark)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
         company.company_name,
         company.company_name_katakana,
         company.address,
@@ -269,8 +269,7 @@ app.post('/addcompany', verifyToken, (req, res) => {
         company.email,
         company.website,
         company.date_of_establishment,
-        company.remark,
-        company.profile_image
+        company.remark
     ], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
@@ -300,8 +299,7 @@ app.post('/updatecompany', verifyToken, (req, res) => {
     email = $7,
     website = $8,
     date_of_establishment = $9,
-    remark = $10,
-    profile_image = $11
+    remark = $10
     WHERE id = $1`, [
         company.id,
         company.company_name,
@@ -312,8 +310,7 @@ app.post('/updatecompany', verifyToken, (req, res) => {
         company.email,
         company.website,
         company.date_of_establishment,
-        company.remark,
-        company.profile_image
+        company.remark
     ], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
@@ -426,8 +423,7 @@ app.post('/updateuser', verifyToken, (req, res) => {
     address = $8,
     postal_code = $9,
     date_of_birth = $10,
-    remark = $11,
-    profile_image = $12
+    remark = $11
     WHERE id = $1`, [
         user.id,
         user.name,
@@ -439,8 +435,7 @@ app.post('/updateuser', verifyToken, (req, res) => {
         user.address,
         user.postal_code,
         user.date_of_birth,
-        user.remark,
-        user.profile_image
+        user.remark
     ], (err, queryRes) => {
         if (err) {
             console.log(err.stack);

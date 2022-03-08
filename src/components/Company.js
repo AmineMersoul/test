@@ -60,8 +60,7 @@ export default function Company() {
                 email: data.get('email'),
                 website: data.get('website'),
                 date_of_establishment: data.get('date_of_establishment'),
-                remark: data.get('remark'),
-                profile_image: 'https://i.pravatar.cc/300'
+                remark: data.get('remark')
             }).then((res) => {
                 console.log(res);
                 navigate("/");
@@ -79,8 +78,7 @@ export default function Company() {
                 email: data.get('email'),
                 website: data.get('website'),
                 date_of_establishment: data.get('date_of_establishment'),
-                remark: data.get('remark'),
-                profile_image: 'https://i.pravatar.cc/300'
+                remark: data.get('remark')
             }).then((res) => {
                 console.log(res);
                 navigate("/");
@@ -99,19 +97,23 @@ export default function Company() {
     }));
 
     function uploadImage(file) {
-        let data = new FormData();
-        data.append('profileImage', file, file.name);
-        data.append('id', company_id);
-        api.post('/uploadcompanyimage', data, {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        }).then((res) => {
-            console.log(res.data.file);
-            setProfileImage(res.data.file);
-        }).catch((err) => {
-            console.log(err.response);
-        });
+        if (location.state.method == 'add') {
+            console.log("create company first then upload image later!");
+        } else {
+            let data = new FormData();
+            data.append('profileImage', file, file.name);
+            data.append('id', company_id);
+            api.post('/uploadcompanyimage', data, {
+                headers: {
+                    'content-type': 'multipart/form-data'
+                }
+            }).then((res) => {
+                console.log(res.data.file);
+                setProfileImage(res.data.file);
+            }).catch((err) => {
+                console.log(err.response);
+            });
+        }
     }
 
     return (
@@ -246,10 +248,7 @@ export default function Company() {
                     <Button variant="text" component="label">Image
                         <input type="file"
                             hidden accept=".gif,.jpg,.jpeg,.png"
-                            onChange={(e) => {
-                                console.log(e.target.files[0]);
-                                uploadImage(e.target.files[0]);
-                            }}
+                            onChange={(e) => { uploadImage(e.target.files[0]) }}
                         />
                     </Button>
                 </Grid>
