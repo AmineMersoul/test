@@ -131,6 +131,7 @@ export default function Company() {
                             autoComplete="email"
                             value={company_name}
                             onChange={(e) => setCompanyName(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                             autoFocus
                         />
                         <TextField
@@ -144,6 +145,7 @@ export default function Company() {
                             autoComplete="company_name_katakana"
                             value={company_name_katakana}
                             onChange={(e) => setCompanyNameKatakana(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -156,6 +158,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -168,6 +171,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={postal_code}
                             onChange={(e) => setPostalCode(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -180,6 +184,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={phone_number}
                             onChange={(e) => setPhoneNumber(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -192,6 +197,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -204,6 +210,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={website}
                             onChange={(e) => setWebsite(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -216,6 +223,7 @@ export default function Company() {
                             autoComplete="complete"
                             value={new Date(date_of_establishment).toLocaleDateString("en-US")}
                             onChange={(e) => setDateOfEstablishment(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <TextField
                             margin="normal"
@@ -228,11 +236,13 @@ export default function Company() {
                             autoComplete="complete"
                             value={remark}
                             onChange={(e) => setRemark(e.target.value)}
+                            disabled={location.state.type == 'user' ? true : false}
                         />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
+                            disabled={location.state.type == 'user' ? true : false}
                             sx={{ mt: 3, mb: 2 }}
                         >
                             Save
@@ -245,12 +255,12 @@ export default function Company() {
                         src={profileImage}
                         sx={{ mx: "auto", width: 200, height: 200 }}
                     />
-                    <Button variant="text" component="label">Image
+                    {location.state.type == 'user' ? null : <Button variant="text" component="label">Image
                         <input type="file"
                             hidden accept=".gif,.jpg,.jpeg,.png"
                             onChange={(e) => { uploadImage(e.target.files[0]) }}
                         />
-                    </Button>
+                    </Button>}
                 </Grid>
             </Grid>
         </div>

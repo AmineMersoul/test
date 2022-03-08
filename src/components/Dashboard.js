@@ -21,7 +21,10 @@ import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import SearchIcon from '@mui/icons-material/Search';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
+import StoreIcon from '@mui/icons-material/Store';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Outlet, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const drawerWidth = 240;
 
@@ -73,6 +76,31 @@ const mdTheme = createTheme();
 
 function DashboardContent() {
     const [open, setOpen] = React.useState(true);
+    const [account_type, setAccountType] = React.useState('');
+    const [company_name, setCompanyName] = React.useState('');
+    const [user, setUser] = React.useState({});
+
+    const api = axios.create({
+        baseURL: `http://localhost:4000`,
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    });
+
+    React.useEffect(() => {
+        api.get('/getaccountbyid').then(res => {
+            console.log(res.data);
+            setAccountType(res.data.type);
+            setCompanyName(res.data.company_name);
+            setUser(res.data);
+            if (res.data.type == 'user') {
+                console.log('your are normal user');
+                navigate('user', { state: res.data });
+            }
+        }).catch((err) => {
+            console.log(err.response);
+        });
+    }, []);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -128,15 +156,26 @@ function DashboardContent() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        <ListItemButton onClick={() => {
+
+                        {account_type == 'user' ? null : <ListItemButton onClick={() => {
                             navigate("");
                         }}>
                             <ListItemIcon>
                                 <SearchIcon />
                             </ListItemIcon>
                             <ListItemText primary="Search" />
-                        </ListItemButton>
-                        <ListItemButton onClick={() => {
+                        </ListItemButton>}
+
+                        {account_type == 'user' ? <ListItemButton onClick={() => {
+                            navigate("user", { state: user });
+                        }}>
+                            <ListItemIcon>
+                                <AccountCircleIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="My Account" />
+                        </ListItemButton> : null}
+
+                        {account_type == 'system admin' ? <ListItemButton onClick={() => {
                             navigate("company", {
                                 state: {
                                     company_name: '',
@@ -156,15 +195,35 @@ function DashboardContent() {
                                 <AddBusinessIcon />
                             </ListItemIcon>
                             <ListItemText primary="Register company" />
-                        </ListItemButton>
-                        <ListItemButton onClick={() => {
+                        </ListItemButton> : null}
+
+                        {account_type == 'admin' || account_type == 'user' ? <ListItemButton onClick={() => {
+                            api.post('/getallcompanies', { company_name: company_name }).then((res) => {
+                                console.log(res.data);
+                                res.data.type = account_type;
+                                navigate("company", {
+                                    state: res.data
+                                });
+                            }).catch((err) => {
+                                console.log(err.response);
+                            });
+
+                        }}>
+                            <ListItemIcon>
+                                <StoreIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Company information" />
+                        </ListItemButton> : null}
+
+                        {account_type == 'user' ? null : <ListItemButton onClick={() => {
                             navigate("account");
                         }}>
                             <ListItemIcon>
                                 <AddReactionIcon />
                             </ListItemIcon>
                             <ListItemText primary="Create new account" />
-                        </ListItemButton>
+                        </ListItemButton>}
+
                         <ListItemButton onClick={() => {
                             localStorage.removeItem('token');
                             navigate("/login");

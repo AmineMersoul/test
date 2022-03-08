@@ -26,8 +26,23 @@ export default function Account() {
     });
 
     React.useEffect(() => {
-        api.get('/getallaccounts').then(res => {
-            setHistory(res.data);
+        api.get('/getaccountbyid').then(res => {
+            console.log(res.data);
+            setCurrentAccountType(res.data.type);
+            setCompanyName(res.data.company_name);
+            if (res.data.type == 'admin') {
+                api.post('/getaccountsbycompanyname', { company_name: res.data.company_name }).then(res => {
+                    setHistory(res.data);
+                }).catch((err) => {
+                    console.log(err.response);
+                });
+            } else {
+                api.get('/getallaccounts').then(res => {
+                    setHistory(res.data);
+                }).catch((err) => {
+                    console.log(err.response);
+                });
+            }
         }).catch((err) => {
             console.log(err.response);
         });
@@ -41,6 +56,7 @@ export default function Account() {
     const [companies_list, setCompaniesList] = React.useState([]);
     const [company_name, setCompanyName] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
+    const [currentaccountType, setCurrentAccountType] = React.useState('');
     const [history, setHistory] = React.useState([]);
 
     function CreateUser(company_name, email, type) {
@@ -57,9 +73,24 @@ export default function Account() {
                     type: type,
                     name: '',
                     email: email,
-                    id: 101
+                    id: 101,
+                    active: 0
                 },
             ]);
+        }).catch((err) => {
+            console.log(err.response);
+        });
+    }
+
+    function RequestingUser(id, index) {
+        console.log(id, index);
+        api.post('/requestinguser', { id: id }).then((res) => {
+            console.log(res);
+            api.get('/getallaccounts').then(res => {
+                setHistory(res.data);
+            }).catch((err) => {
+                console.log(err.response);
+            });
         }).catch((err) => {
             console.log(err.response);
         });
@@ -68,15 +99,9 @@ export default function Account() {
     const handleSubmitCompany = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            company_name: companies_list.filter((company) => {
-                return company.id == data.get("company_name")
-            })[0].company_name,
-            type: data.get("account_type"),
-            email: data.get("email"),
-        });
+        console.log('company_name', company_name);
         CreateUser(companies_list.filter((company) => {
-            return company.id == data.get("company_name")
+            return company.id == data.get("company_name") || company.company_name == company_name
         })[0].company_name, data.get("email"), data.get("account_type"));
     };
 
@@ -99,13 +124,13 @@ export default function Account() {
                             onChange={(e) => { setAccountType(e.target.value) }}
                             required
                         >
-                            <MenuItem value={"system admin"}>System Admin</MenuItem>
+                            {currentaccountType == 'system admin' ? <MenuItem value={"system admin"}>System Admin</MenuItem> : null}
                             <MenuItem value={"admin"}>Admin</MenuItem>
                             <MenuItem value={"user"}>User</MenuItem>
                         </Select>
                     </FormControl>
-                    <Box sx={{ height: 20, }} />
-                    <FormControl fullWidth>
+                    {currentaccountType == 'system admin' ? <Box sx={{ height: 20, }} /> : null}
+                    {currentaccountType == 'system admin' ? <FormControl fullWidth>
                         <InputLabel id="select-company-name">Select Company</InputLabel>
                         <Select
                             labelId="select-company-name"
@@ -120,7 +145,7 @@ export default function Account() {
                                 <MenuItem key={row.id} value={row.id}>{row.company_name}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </FormControl> : null}
                     <TextField
                         margin="normal"
                         required
@@ -150,7 +175,7 @@ export default function Account() {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Company Name</TableCell>
+                            {currentaccountType == 'admin' ? null : <TableCell>Company Name</TableCell>}
                             <TableCell>Account Type</TableCell>
                             <TableCell>User Name</TableCell>
                             <TableCell>E-Mail</TableCell>
@@ -158,18 +183,20 @@ export default function Account() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {history.map((row) => (
+                        {history.map((row, index) => (
                             <TableRow
                                 key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row">
+                                {currentaccountType == 'admin' ? null : <TableCell component="th" scope="row">
                                     {row.company_name}
-                                </TableCell>
+                                </TableCell>}
                                 <TableCell>{row.type}</TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.email}</TableCell>
-                                <TableCell><Button variant="text">Requesting</Button></TableCell>
+                                {row.active == 1 ? <TableCell>Completed</TableCell> : null}
+                                {row.active == 0 ? <TableCell><Button variant="text" onClick={() => { RequestingUser(row.id, index) }}>Requesting</Button></TableCell> : null}
+                                {row.active == -1 ? <TableCell>Cancelled</TableCell> : null}
                             </TableRow>
                         ))}
                     </TableBody>

@@ -23,7 +23,7 @@ export default function Activate() {
         const email = searchParams.get('email');
         const activation = searchParams.get('activation')
         if (email == null || activation == null) {
-            navigate('/signin');
+            navigate('/login');
         }
         console.log(activation, email);
         api.post('/getunactiveaccount', {
@@ -31,15 +31,15 @@ export default function Activate() {
             activation: activation
         }).then(res => {
             console.log(res.data);
-            if (res.data.active == 1) {
-                navigate('/signin');
-            } else {
+            if (res.data.active == 0) {
                 setUserId(res.data.id);
                 setEmail(res.data.email);
+            } else {
+                navigate('/login');
             }
         }).catch((err) => {
             console.log(err.response);
-            navigate('/signin');
+            navigate('/login');
         });
     }, []);
 

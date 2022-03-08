@@ -253,6 +253,25 @@ app.get('/getallcompanies', verifyToken, (req, res) => {
     }
 });
 
+// get companie by name
+app.post('/getallcompanies', verifyToken, (req, res) => {
+
+    let errors = [];
+
+    pool.query(`SELECT * from company WHERE company_name = $1`, [req.body.company_name], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            res.json(queryRes.rows[0]);
+            console.log(queryRes.rows);
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
+
 // add company
 app.post('/addcompany', verifyToken, (req, res) => {
 
@@ -335,6 +354,45 @@ app.get('/getallaccounts', verifyToken, (req, res) => {
             console.log(err.stack);
         } else {
             res.json(queryRes.rows);
+            console.log(queryRes.rows);
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
+
+// get accounts by company name
+app.post('/getaccountsbycompanyname', verifyToken, (req, res) => {
+
+    const user = req.body;
+    let errors = [];
+
+    pool.query(`SELECT * from account WHERE company_name = $1`, [user.company_name], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            res.json(queryRes.rows);
+            console.log(queryRes.rows);
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
+
+// get account by id
+app.get('/getaccountbyid', verifyToken, (req, res) => {
+
+    let errors = [];
+
+    pool.query(`SELECT * from account WHERE id = $1`, [req.decoded.payload.id], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            res.json(queryRes.rows[0]);
             console.log(queryRes.rows);
         }
     });
@@ -448,7 +506,34 @@ app.post('/updateuser', verifyToken, (req, res) => {
     if (errors.length > 0) {
         res.json({ errors });
     }
-})
+});
+
+// requesting user
+app.post('/requestinguser', verifyToken, (req, res) => {
+
+    const user = req.body;
+    let errors = [];
+
+    console.log('user', user);
+
+    pool.query(`UPDATE account
+    SET active = $2
+    WHERE id = $1`, [
+        user.id,
+        -1
+    ], (err, queryRes) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            console.log(queryRes.command + ' rows : ' + queryRes.rowCount);
+            res.json({ message: "user requestined" });
+        }
+    });
+
+    if (errors.length > 0) {
+        res.json({ errors });
+    }
+});
 
 // Login
 app.post('/login', (req, res) => {
