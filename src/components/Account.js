@@ -29,8 +29,8 @@ export default function Account() {
         api.get('/getaccountbyid').then(res => {
             console.log(res.data);
             setCurrentAccountType(res.data.type);
-            setCompanyName(res.data.company_name);
             if (res.data.type == 'admin') {
+                setCompanyName(res.data.company_name);
                 api.post('/getaccountsbycompanyname', { company_name: res.data.company_name }).then(res => {
                     setHistory(res.data);
                 }).catch((err) => {
