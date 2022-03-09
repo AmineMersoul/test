@@ -54,10 +54,15 @@ export default function User() {
             remark: data.get('remark')
         }).then((res) => {
             console.log(res);
-            if (location.state.type == 'user')
-                console.log('dont redirect');
-            else
-                navigate("/");
+            api.get('/getaccountbyid').then(res => {
+                console.log('current user', res)
+                if (res.data.type == 'user')
+                    console.log('dont redirect');
+                else
+                    navigate("/");
+            }).catch((err) => {
+                console.log(err.response);
+            });
         }).catch((err) => {
             console.log(err.response);
         });
