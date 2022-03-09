@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -27,7 +30,7 @@ export default function Company() {
     const [phone_number, setPhoneNumber] = React.useState(location.state.phone_number);
     const [email, setEmail] = React.useState(location.state.email);
     const [website, setWebsite] = React.useState(location.state.website);
-    const [date_of_establishment, setDateOfEstablishment] = React.useState(location.state.date_of_establishment);
+    const [date_of_establishment, setDateOfEstablishment] = React.useState(new Date(location.state.date_of_establishment).toLocaleDateString("en-US"));
     const [remark, setRemark] = React.useState(location.state.remark);
     const [profileImage, setProfileImage] = React.useState(location.state.profile_image);
 
@@ -45,7 +48,7 @@ export default function Company() {
             phone_number: data.get('phone_number'),
             email: data.get('email'),
             website: data.get('website'),
-            date_of_establishment: data.get('date_of_establishment'),
+            date_of_establishment: date_of_establishment,
             remark: data.get('remark'),
         });
 
@@ -59,7 +62,7 @@ export default function Company() {
                 phone_number: data.get('phone_number'),
                 email: data.get('email'),
                 website: data.get('website'),
-                date_of_establishment: data.get('date_of_establishment'),
+                date_of_establishment: date_of_establishment,
                 remark: data.get('remark')
             }).then((res) => {
                 console.log(res);
@@ -77,7 +80,7 @@ export default function Company() {
                 phone_number: data.get('phone_number'),
                 email: data.get('email'),
                 website: data.get('website'),
-                date_of_establishment: data.get('date_of_establishment'),
+                date_of_establishment: date_of_establishment,
                 remark: data.get('remark')
             }).then((res) => {
                 console.log(res);
@@ -120,7 +123,7 @@ export default function Company() {
         <div>
             <Grid container spacing={2}>
                 <Grid item xs={8}>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
@@ -212,19 +215,22 @@ export default function Company() {
                             onChange={(e) => setWebsite(e.target.value)}
                             disabled={location.state.type == 'user' ? true : false}
                         />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="date_of_establishment"
-                            name="date_of_establishment"
-                            label="Date of Establishment"
-                            type="text"
-                            autoComplete="complete"
-                            value={new Date(date_of_establishment).toLocaleDateString("en-US")}
-                            onChange={(e) => setDateOfEstablishment(e.target.value)}
-                            disabled={location.state.type == 'user' ? true : false}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                disabled={location.state.type == 'user' ? true : false}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="date_of_establishment"
+                                name="date_of_establishment"
+                                label="Date of Establishment"
+                                value={date_of_establishment}
+                                onChange={(newValue) => {
+                                    setDateOfEstablishment(new Date(newValue).toLocaleDateString("en-US"));
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
                         <TextField
                             margin="normal"
                             required

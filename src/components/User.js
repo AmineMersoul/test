@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -28,7 +31,7 @@ export default function User() {
     const [phone_number, setPhoneNumber] = React.useState(location.state.phone_number);
     const [address, setAddress] = React.useState(location.state.address);
     const [postal_code, setPostalCode] = React.useState(location.state.postal_code);
-    const [date_of_birth, setDateOfBirth] = React.useState(location.state.date_of_birth);
+    const [date_of_birth, setDateOfBirth] = React.useState(new Date(location.state.date_of_birth).toLocaleDateString("en-US"));
     const [remark, setRemark] = React.useState(location.state.remark);
     const [profileImage, setProfileImage] = React.useState(location.state.profile_image);
 
@@ -47,7 +50,7 @@ export default function User() {
             phone_number: data.get('phone_number'),
             address: data.get('address'),
             postal_code: data.get('postal_code'),
-            date_of_birth: data.get('date_of_birth'),
+            date_of_birth: date_of_birth,
             remark: data.get('remark'),
         });
         api.post('/updateuser', {
@@ -60,7 +63,7 @@ export default function User() {
             phone_number: data.get('phone_number'),
             address: data.get('address'),
             postal_code: data.get('postal_code'),
-            date_of_birth: data.get('date_of_birth'),
+            date_of_birth: date_of_birth,
             remark: data.get('remark')
         }).then((res) => {
             console.log(res);
@@ -98,7 +101,7 @@ export default function User() {
         <div>
             <Grid container spacing={2}>
                 <Grid item xs={8}>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
                             required
@@ -195,18 +198,21 @@ export default function User() {
                             value={postal_code}
                             onChange={(e) => setPostalCode(e.target.value)}
                         />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="date_of_birth"
-                            name="date_of_birth"
-                            label="Date of Birth"
-                            type="text"
-                            autoComplete="date_of_birth"
-                            value={new Date(date_of_birth).toLocaleDateString("en-US")}
-                            onChange={(e) => setDateOfBirth(e.target.value)}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="date_of_birth"
+                                name="date_of_birth"
+                                label="Date of Birth"
+                                value={date_of_birth}
+                                onChange={(newValue) => {
+                                    setDateOfBirth(new Date(newValue).toLocaleDateString("en-US"));
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
                         <TextField
                             margin="normal"
                             required

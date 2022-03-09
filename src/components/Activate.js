@@ -7,6 +7,9 @@ import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -52,7 +55,7 @@ export default function Activate() {
     const [phone_number, setPhoneNumber] = React.useState('');
     const [address, setAddress] = React.useState('');
     const [postal_code, setPostalCode] = React.useState('');
-    const [date_of_birth, setDateOfBirth] = React.useState('');
+    const [date_of_birth, setDateOfBirth] = React.useState(new Date().toLocaleDateString("en-US"));
     const [remark, setRemark] = React.useState('');
     const [profileImage, setProfileImage] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -69,7 +72,7 @@ export default function Activate() {
             phone_number: data.get('phone_number'),
             address: data.get('address'),
             postal_code: data.get('postal_code'),
-            date_of_birth: data.get('date_of_birth'),
+            date_of_birth: date_of_birth,
             remark: data.get('remark'),
         });
         api.post('/activateaccount', {
@@ -82,11 +85,11 @@ export default function Activate() {
             phone_number: data.get('phone_number'),
             address: data.get('address'),
             postal_code: data.get('postal_code'),
-            date_of_birth: data.get('date_of_birth'),
+            date_of_birth: date_of_birth,
             remark: data.get('remark'),
             password: password
         }).then((res) => {
-            console.log(res);
+            console.log('res', res);
             navigate("/login");
         }).catch((err) => {
             console.log(err.response);
@@ -122,7 +125,7 @@ export default function Activate() {
             <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={8}>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
                                 required
@@ -219,18 +222,21 @@ export default function Activate() {
                                 value={postal_code}
                                 onChange={(e) => setPostalCode(e.target.value)}
                             />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="date_of_birth"
-                                name="date_of_birth"
-                                label="Date of Birth"
-                                type="text"
-                                autoComplete="date_of_birth"
-                                value={date_of_birth}
-                                onChange={(e) => setDateOfBirth(e.target.value)}
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DatePicker
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="date_of_birth"
+                                    name="date_of_birth"
+                                    label="Date of Birth"
+                                    value={date_of_birth}
+                                    onChange={(newValue) => {
+                                        setDateOfBirth(new Date(newValue).toLocaleDateString("en-US"));
+                                    }}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
                             <TextField
                                 margin="normal"
                                 required
