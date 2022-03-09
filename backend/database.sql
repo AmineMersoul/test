@@ -15,16 +15,34 @@ CREATE TABLE company(id SERIAL PRIMARY KEY,
 
 
 INSERT into company(company_name, company_name_katakana, address, postal_code, phone_number, email, website, date_of_establishment, remark, profile_image)
-VALUES ('company_01',
+VALUES ('company_101',
         'カイシャ',
         'address',
         '000-0000',
         '090102030405',
-        'company_01@gmail.com',
-        'www.company_01.com',
+        'company_101@gmail.com',
+        'www.company_101.com',
         '2022-01-01',
         'remark',
-        'https://i.pravatar.cc/300');
+        'https://ui-avatars.com/api/?size=300&name=company+101'), ('company_102',
+                                                                   'カイシャ',
+                                                                   'address',
+                                                                   '000-0000',
+                                                                   '090102030405',
+                                                                   'company_102@gmail.com',
+                                                                   'www.company_102.com',
+                                                                   '2022-01-01',
+                                                                   'remark',
+                                                                   'https://ui-avatars.com/api/?size=300&name=company+102'), ('company_103',
+                                                                                                                              'カイシャ',
+                                                                                                                              'address',
+                                                                                                                              '000-0000',
+                                                                                                                              '090102030405',
+                                                                                                                              'company_103@gmail.com',
+                                                                                                                              'www.company_103.com',
+                                                                                                                              '2022-01-01',
+                                                                                                                              'remark',
+                                                                                                                              'https://ui-avatars.com/api/?size=300&name=company+103');
 
 
 CREATE TABLE account(id SERIAL PRIMARY KEY,
@@ -47,27 +65,50 @@ CREATE TABLE account(id SERIAL PRIMARY KEY,
 
 
 INSERT into account(name, name_katakana, company_name, employee_number, department, email, phone_number, address, postal_code, date_of_birth, remark, password, profile_image, type, activation, active)
-VALUES ('user_01',
-        'user_01',
+VALUES ('system_admin',
+        'system_admin',
         'company_101',
         '101',
         'department',
-        'user_01@gmail.com',
+        'system_admin@gmail.com',
         '090102030405',
         'address',
         '000-0000',
         '2022-01-01',
         'remark',
         '$2b$10$F7WCXNI9Ik5YSfj13pMEYOSr8BS2ZCcK1ZnyMgvGORCxBb88pKRNu',
-        'https://i.pravatar.cc/300',
+        'https://ui-avatars.com/api/?size=300&name=system+admin',
         'system admin',
         '',
-        1);
+        1), ('admin',
+             'admin',
+             'company_101',
+             '102',
+             'department',
+             'admin@gmail.com',
+             '090102030405',
+             'address',
+             '000-0000',
+             '2022-01-01',
+             'remark',
+             '$2b$10$F7WCXNI9Ik5YSfj13pMEYOSr8BS2ZCcK1ZnyMgvGORCxBb88pKRNu',
+             'https://ui-avatars.com/api/?size=300&name=admin',
+             'admin',
+             '',
+             1),('user',
+                 'user',
+                 'company_101',
+                 '103',
+                 'department',
+                 'user@gmail.com',
+                 '090102030405',
+                 'address',
+                 '000-0000',
+                 '2022-01-01',
+                 'remark',
+                 '$2b$10$F7WCXNI9Ik5YSfj13pMEYOSr8BS2ZCcK1ZnyMgvGORCxBb88pKRNu',
+                 'https://ui-avatars.com/api/?size=300&name=system+user',
+                 'user',
+                 '',
+                 1);
 
-
-SELECT *
-from account
-WHERE company_name = 'company_101'
-        AND type = 'system admin'
-        AND (name LIKE '%user_01%'
-             OR email LIKE '%user_01@gmail.com%');
