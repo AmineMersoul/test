@@ -239,7 +239,7 @@ app.get('/getallcompanies', verifyToken, (req, res) => {
 
     let errors = [];
 
-    pool.query(`SELECT * from company`, (err, queryRes) => {
+    pool.query(`SELECT * from company ORDER BY id`, (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
@@ -254,7 +254,7 @@ app.get('/getallcompanies', verifyToken, (req, res) => {
 });
 
 // get companie by name
-app.post('/getallcompanies', verifyToken, (req, res) => {
+app.post('/getcompanybyname', verifyToken, (req, res) => {
 
     let errors = [];
 
@@ -349,7 +349,7 @@ app.get('/getallaccounts', verifyToken, (req, res) => {
 
     let errors = [];
 
-    pool.query(`SELECT * from account`, (err, queryRes) => {
+    pool.query(`SELECT * from account ORDER BY id`, (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
@@ -369,7 +369,7 @@ app.post('/getaccountsbycompanyname', verifyToken, (req, res) => {
     const user = req.body;
     let errors = [];
 
-    pool.query(`SELECT * from account WHERE company_name = $1`, [user.company_name], (err, queryRes) => {
+    pool.query(`SELECT * from account WHERE company_name = $1 ORDER BY id`, [user.company_name], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
@@ -444,7 +444,7 @@ app.post('/searchaccount', verifyToken, (req, res) => {
     WHERE company_name = $1
     AND type = $2
     AND (name LIKE $3
-    OR email LIKE $3)`, [
+    OR email LIKE $3) ORDER BY id`, [
         search.company_name,
         search.type,
         '%' + search.query + '%'

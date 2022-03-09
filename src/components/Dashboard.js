@@ -198,7 +198,7 @@ function DashboardContent() {
                         </ListItemButton> : null}
 
                         {account_type == 'admin' || account_type == 'user' ? <ListItemButton onClick={() => {
-                            api.post('/getallcompanies', { company_name: company_name }).then((res) => {
+                            api.post('/getcompanybyname', { company_name: company_name }).then((res) => {
                                 console.log(res.data);
                                 res.data.type = account_type;
                                 navigate("company", {
