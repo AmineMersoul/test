@@ -27,11 +27,10 @@ export default function Account() {
 
     React.useEffect(() => {
         api.get('/getaccountbyid').then(res => {
-            console.log(res.data);
             setCurrentAccountType(res.data.type);
             if (res.data.type == 'admin') {
                 setCompanyName(res.data.company_name);
-                api.post('/getaccountsbycompanyname', { company_name: res.data.company_name }).then(res => {
+                api.post('/getaccountsbycompanyid', { company_id: res.data.company_id }).then(res => {
                     setHistory(res.data);
                 }).catch((err) => {
                     console.log(err.response);
@@ -59,9 +58,10 @@ export default function Account() {
     const [currentaccountType, setCurrentAccountType] = React.useState('');
     const [history, setHistory] = React.useState([]);
 
-    function CreateUser(company_name, email, type) {
+    function CreateUser(company_name, company_id, email, type) {
         api.post('/addaccount', {
             company_name: company_name,
+            company_id: company_id,
             email: email,
             type: type
         }).then((res) => {
@@ -102,7 +102,7 @@ export default function Account() {
         console.log('company_name', company_name);
         CreateUser(companies_list.filter((company) => {
             return company.id == data.get("company_name") || company.company_name == company_name
-        })[0].company_name, data.get("email"), data.get("account_type"));
+        })[0].company_name, data.get("company_name"), data.get("email"), data.get("account_type"));
     };
 
     return (

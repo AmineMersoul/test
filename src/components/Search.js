@@ -27,27 +27,44 @@ export default function Search() {
     });
 
     React.useEffect(() => {
-        api.get('/getallcompanies').then(res => {
-            setCompaniesList(res.data);
+
+        api.get('/getaccountbyid').then(res => {
+            console.log(res.data);
+            setCurrentAccountType(res.data.type);
+            if (res.data.type == 'admin') {
+                setCompany2(res.data.company_id);
+                api.post('/getaccountsbycompanyid', { company_id: res.data.company_id }).then(res => {
+                    setResults(res.data);
+                }).catch((err) => {
+                    console.log(err.response);
+                });
+            } else {
+                api.get('/getallaccounts').then(res => {
+                    setResults(res.data);
+                }).catch((err) => {
+                    console.log(err.response);
+                });
+            }
         }).catch((err) => {
             console.log(err.response);
         });
-        api.get('/getallaccounts').then(res => {
-            setResults(res.data);
+
+        api.get('/getallcompanies').then(res => {
+            setCompaniesList(res.data);
         }).catch((err) => {
             console.log(err.response);
         });
     }, []);
 
     const [companies_list, setCompaniesList] = React.useState([]);
-
     const [company_name_1, setCompany1] = React.useState('');
     const [company_name_2, setCompany2] = React.useState('');
     const [accountType, setAccountType] = React.useState('');
     const [results, setResults] = React.useState([]);
+    const [currentaccountType, setCurrentAccountType] = React.useState('');
 
-    function SearchUser(company_name, type, query) {
-        api.post('/searchaccount', { company_name: company_name, type: type, query: query }).then((res) => {
+    function SearchUser(company_id, type, query) {
+        api.post('/searchaccount', { company_id: company_id, type: type, query: query }).then((res) => {
             console.log(res);
             setResults(res.data);
         }).catch((err) => {
@@ -58,16 +75,7 @@ export default function Search() {
     const handleSubmitUser = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            company_name2: data.get("company_name2"),
-            type: data.get("account_type"),
-            name: data.get("user_name"),
-        });
-        SearchUser(companies_list.filter((company) => {
-            return company.id == data.get("company_name2")
-        })[0].company_name,
-            data.get("account_type"),
-            data.get("user_name"));
+        SearchUser(company_name_2, data.get("account_type"), data.get("user_name"));
     };
 
     const handleSubmitCompany = (event) => {
@@ -84,11 +92,11 @@ export default function Search() {
 
     return (
         <div>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+            {currentaccountType == 'system admin' ? <Typography component="h2" variant="h6" color="primary" gutterBottom>
                 Search Compnay
-            </Typography>
+            </Typography> : null}
             <Box sx={{ minWidth: 120 }}>
-                <Box component="form" onSubmit={handleSubmitCompany}>
+                {currentaccountType == 'system admin' ? <Box component="form" onSubmit={handleSubmitCompany}>
                     <FormControl fullWidth>
                         <InputLabel id="select-company">Select Company</InputLabel>
                         <Select
@@ -113,14 +121,14 @@ export default function Search() {
                     >
                         Search
                     </Button>
-                </Box>
+                </Box> : null}
                 <Box sx={{ height: 40, }} />
                 <Typography component="h2" variant="h6" color="primary" gutterBottom>
                     Search Users
                 </Typography>
                 <Box sx={{ height: 10, }} />
                 <Box component="form" onSubmit={handleSubmitUser}>
-                    <FormControl fullWidth>
+                    {currentaccountType == 'admin' ? null : <FormControl fullWidth>
                         <InputLabel id="select-company-2">Select Company</InputLabel>
                         <Select
                             labelId="select-company-2"
@@ -135,7 +143,8 @@ export default function Search() {
                                 <MenuItem key={row.id} value={row.id}>{row.company_name}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
+                    </FormControl>}
+
                     <Box sx={{ height: 20, }} />
                     <FormControl fullWidth>
                         <InputLabel id="select-account-type">Account Type</InputLabel>
@@ -182,7 +191,7 @@ export default function Search() {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Company Name</TableCell>
+                            {currentaccountType == 'system admin' ? <TableCell>Company Name</TableCell> : null}
                             <TableCell>Account Type</TableCell>
                             <TableCell>User Name</TableCell>
                             <TableCell>E-Mail</TableCell>
@@ -196,9 +205,9 @@ export default function Search() {
                                 key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row">
+                                {currentaccountType == 'system admin' ? <TableCell component="th" scope="row">
                                     {row.company_name}
-                                </TableCell>
+                                </TableCell> : null}
                                 <TableCell>{row.type}</TableCell>
                                 <TableCell>{row.name}</TableCell>
                                 <TableCell>{row.email}</TableCell>

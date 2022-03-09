@@ -40,19 +40,6 @@ export default function User() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        console.log({
-            name: data.get('name'),
-            name_katakana: data.get('name_katakana'),
-            employee_number: data.get('employee_number'),
-            department: data.get('department'),
-            email: data.get('email'),
-            phone_number: data.get('phone_number'),
-            address: data.get('address'),
-            postal_code: data.get('postal_code'),
-            date_of_birth: date_of_birth,
-            remark: data.get('remark'),
-        });
         api.post('/updateuser', {
             id: location.state.id,
             name: data.get('name'),
@@ -67,7 +54,10 @@ export default function User() {
             remark: data.get('remark')
         }).then((res) => {
             console.log(res);
-            navigate("/");
+            if (location.state.type == 'user')
+                console.log('dont redirect');
+            else
+                navigate("/");
         }).catch((err) => {
             console.log(err.response);
         });

@@ -77,7 +77,7 @@ const mdTheme = createTheme();
 function DashboardContent() {
     const [open, setOpen] = React.useState(true);
     const [account_type, setAccountType] = React.useState('');
-    const [company_name, setCompanyName] = React.useState('');
+    const [company_id, setCompanyId] = React.useState(0);
     const [user, setUser] = React.useState({});
 
     const api = axios.create({
@@ -91,7 +91,7 @@ function DashboardContent() {
         api.get('/getaccountbyid').then(res => {
             console.log(res.data);
             setAccountType(res.data.type);
-            setCompanyName(res.data.company_name);
+            setCompanyId(res.data.company_id);
             setUser(res.data);
             if (res.data.type == 'user') {
                 console.log('your are normal user');
@@ -167,7 +167,13 @@ function DashboardContent() {
                         </ListItemButton>}
 
                         {account_type == 'user' ? <ListItemButton onClick={() => {
-                            navigate("user", { state: user });
+
+                            api.get('/getaccountbyid').then(res => {
+                                console.log(res.data);
+                                navigate("user", { state: res.data });
+                            }).catch((err) => {
+                                console.log(err.response);
+                            });
                         }}>
                             <ListItemIcon>
                                 <AccountCircleIcon />
@@ -198,7 +204,7 @@ function DashboardContent() {
                         </ListItemButton> : null}
 
                         {account_type == 'admin' || account_type == 'user' ? <ListItemButton onClick={() => {
-                            api.post('/getcompanybyname', { company_name: company_name }).then((res) => {
+                            api.post('/getcompanybyid', { company_id: company_id }).then((res) => {
                                 console.log(res.data);
                                 res.data.type = account_type;
                                 navigate("company", {

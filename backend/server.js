@@ -254,11 +254,11 @@ app.get('/getallcompanies', verifyToken, (req, res) => {
 });
 
 // get companie by name
-app.post('/getcompanybyname', verifyToken, (req, res) => {
+app.post('/getcompanybyid', verifyToken, (req, res) => {
 
     let errors = [];
 
-    pool.query(`SELECT * from company WHERE company_name = $1`, [req.body.company_name], (err, queryRes) => {
+    pool.query(`SELECT * from company WHERE id = $1`, [req.body.company_id], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
@@ -364,12 +364,12 @@ app.get('/getallaccounts', verifyToken, (req, res) => {
 });
 
 // get accounts by company name
-app.post('/getaccountsbycompanyname', verifyToken, (req, res) => {
+app.post('/getaccountsbycompanyid', verifyToken, (req, res) => {
 
     const user = req.body;
     let errors = [];
 
-    pool.query(`SELECT * from account WHERE company_name = $1 ORDER BY id`, [user.company_name], (err, queryRes) => {
+    pool.query(`SELECT * from account WHERE company_id = $1 ORDER BY id`, [user.company_id], (err, queryRes) => {
         if (err) {
             console.log(err.stack);
         } else {
@@ -410,9 +410,10 @@ app.post('/addaccount', verifyToken, (req, res) => {
 
     const activation = randomstring.generate();
 
-    pool.query(`INSERT into account(company_name, email, type, activation, active)
-    VALUES ($1, $2, $3, $4, $5)`, [
+    pool.query(`INSERT into account(company_name, company_id, email, type, activation, active)
+    VALUES ($1, $2, $3, $4, $5, $6)`, [
         account.company_name,
+        account.company_id,
         account.email,
         account.type,
         activation,
@@ -441,11 +442,11 @@ app.post('/searchaccount', verifyToken, (req, res) => {
 
     pool.query(`SELECT *
     from account
-    WHERE company_name = $1
+    WHERE company_id = $1
     AND type = $2
     AND (name LIKE $3
     OR email LIKE $3) ORDER BY id`, [
-        search.company_name,
+        search.company_id,
         search.type,
         '%' + search.query + '%'
     ], (err, queryRes) => {
